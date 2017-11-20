@@ -21,7 +21,7 @@ function checkProject(p: Project) {
     assert(f.getContentSync());
 }
 
-const Creds = {token: GitHubToken};
+const Creds = { token: GitHubToken };
 
 describe("GitProject", () => {
 
@@ -136,7 +136,7 @@ describe("GitProject", () => {
             .then(() => done(), done);
     });
 
-    it("add a file, init and commit, then push to new remote repo", function(done) {
+    it("add a file, init and commit, then push to new remote repo", function (done) {
         this.retries(5);
 
         const p = tempProject();
@@ -146,17 +146,19 @@ describe("GitProject", () => {
 
         const gp: GitProject = GitCommandGitProject.fromProject(p, Creds);
 
-        getOwnerByToken().then(owner => gp.init()
-            .then(() => gp.createAndSetGitHubRemote(owner, repo, "Thing1", TestRepositoryVisibility))
-            .then(() => gp.commit("Added a Thing"))
-            .then(() => gp.push()
-                    .then(() => deleteRepoIfExists({owner, repo}).then(done)),
-            ).catch(() => deleteRepoIfExists({owner, repo}).then(done)),
-        ).catch(done);
+        getOwnerByToken()
+            .then(owner => gp.init()
+                .then(() => gp.createAndSetGitHubRemote(owner, repo, "Thing1", TestRepositoryVisibility))
+                .then(() => gp.commit("Added a Thing"))
+                .then(() => gp.push()
+                    .then(() => deleteRepoIfExists({ owner, repo }),
+                        (err) => deleteRepoIfExists({ owner, repo })
+                            .then((deleteErr) => Promise.resolve(err))),
+                ).then(() => done(), done));
 
     }).timeout(16000);
 
-    it("add a file, then PR push to remote repo", function(done) {
+    it("add a file, then PR push to remote repo", function (done) {
         this.retries(1);
 
         newRepo()
@@ -170,7 +172,7 @@ describe("GitProject", () => {
                         .then(() => gp.push())
                         .then(() => gp.raisePullRequest("Thing2", "Adds another character"))
                         .then(() => deleteRepoIfExists(ownerAndRepo));
-                }).catch( err => {
+                }).catch(err => {
                     deleteRepoIfExists(ownerAndRepo).then(() => Promise.reject(err));
                 }))
             .then(() => done(), done);
