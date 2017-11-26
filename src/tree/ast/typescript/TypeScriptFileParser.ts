@@ -75,7 +75,7 @@ function scriptKindFor(f: File): ts.ScriptKind {
 }
 
 // TODO coming from newer path expression support
-function locationSteps(pex: PathExpression): LocationStep[] {
+export function locationSteps(pex: PathExpression): LocationStep[] {
     return isUnionPathExpression(pex) ?
         _.flatten(pex.unions.map(p => locationSteps(p))) :
         pex.locationSteps;
