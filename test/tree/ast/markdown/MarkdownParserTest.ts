@@ -1,7 +1,7 @@
 
 import "mocha";
 import * as assert from "power-assert";
-import { findMatches, findValues } from "../../../../src/tree/ast/astUtils";;
+import { findMatches, findValues } from "../../../../src/tree/ast/astUtils";
 
 import * as appRoot from "app-root-path";
 import { NodeFsLocalProject } from "../../../../src/project/local/NodeFsLocalProject";

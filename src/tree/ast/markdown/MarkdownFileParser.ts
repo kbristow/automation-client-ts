@@ -1,8 +1,8 @@
 import { File } from "../../../project/File";
 
-import { FileParser } from "../FileParser";
-import { TreeNode } from "@atomist/tree-path/TreeNode";
 import { PathExpression } from "@atomist/tree-path/path/pathExpression";
+import { TreeNode } from "@atomist/tree-path/TreeNode";
+import { FileParser } from "../FileParser";
 
 import stringify = require("json-stringify-safe");
 import { promisify } from "util";
