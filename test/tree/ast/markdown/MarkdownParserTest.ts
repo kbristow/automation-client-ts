@@ -26,7 +26,7 @@ describe("MarkdownParser", () => {
                     assert(matchResults.length === 1);
                     assert(matchResults[0].$children.length === 1);
                     const textKid = matchResults[0].$children[0];
-                    console.log("textkid=" + JSON.stringify(textKid))
+                    assert(textKid.$name === "text");
                     assert(textKid.$value === "big");
                     assert(matchResults[0].$value === "*big*");
                     done();

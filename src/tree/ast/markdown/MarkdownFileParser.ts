@@ -151,17 +151,17 @@ class DefaultMarkAstTreeNode extends AbstractMarkAstTreeNode {
                         });
                         break;
                     case "em" :
-                        console.log("Found em " + JSON.stringify(n));
-                        this.$children.push({
+                        const em = {
                             $name: "em",
-                            $value: n.text,
-                            $children: [
-                                n.text.map(k => ({
-                                    $name: "text",
-                                    $value: k,
-                                })),
-                            ],
-                        });
+                            $value: "*" + n.text[0] + "*",
+                            $children: n.text.map(k => ({
+                                $name: "text",
+                                $value: k,
+                            })),
+                        };
+                        this.$children.push(em);
+                        console.log("Found em " + JSON.stringify(n) + ",returned " + JSON.stringify(em));
+
                         break;
                 }
             }
