@@ -12,7 +12,11 @@ import { AllNodeTest, isNamedNodeTest } from "@atomist/tree-path/path/nodeTests"
 import { parse } from "marked-ast";
 import { locationSteps } from "../typescript/TypeScriptFileParser";
 
-const Productions = ["heading", "list", "listitem", "paragraph", "link", "href", "title", "text"];
+const Productions = [
+    "em", "heading", "list", "listitem",
+    "paragraph",
+    "link", "href", "title",
+    "text"];
 
 /**
  * Parse markdown. Legal productions are heading, list, listitem and paragraph.
@@ -128,30 +132,45 @@ class DefaultMarkAstTreeNode extends AbstractMarkAstTreeNode {
                     $name: "text",
                     $value: n,
                 });
-            } else if (n.type === "link") {
-                // Need two children to allow editing
-                this.$children.push({
-                    $name: "link",
-                    $value: n.text,
-                    href: n.href,
-                    $children: [{
-                        $name: "href",
-                        $value: n.href,
-                    }, {
-                        $name: "title",
-                        $value: n.title,
-                    },
-                    ],
-                });
-
-            } else if (n.type === "em") {
-                console.log(`FOund EM [${n}]`);
-                this.$children.push({
-                    $name: "em",
-                    $value: n.text,
-                });
+            } else {
+                switch (n.type) {
+                    case "link" :
+                        // Need two children to allow editing
+                        this.$children.push({
+                            $name: "link",
+                            $value: n.text,
+                            href: n.href,
+                            $children: [{
+                                $name: "href",
+                                $value: n.href,
+                            }, {
+                                $name: "title",
+                                $value: n.title,
+                            },
+                            ],
+                        });
+                        break;
+                    case "em" :
+                        console.log("Found em " + JSON.stringify(n));
+                        this.$children.push({
+                            $name: "em",
+                            $value: n.text,
+                            $children: [
+                                n.text.map(k => ({
+                                    $name: "text",
+                                    $value: k,
+                                })),
+                            ],
+                        });
+                        break;
+                }
             }
         });
     }
 
+}
+
+export interface Link extends TreeNode {
+    title: string;
+    href: string;
 }
