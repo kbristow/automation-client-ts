@@ -4,12 +4,12 @@ import { fail } from "power-assert";
 import { findMatches, findValues } from "../../../../src/tree/ast/astUtils";
 
 import { evaluateScalarValue } from "@atomist/tree-path/path/expressionEngine";
+import { visit } from "@atomist/tree-path/visitor";
 import * as appRoot from "app-root-path";
 import { NodeFsLocalProject } from "../../../../src/project/local/NodeFsLocalProject";
 import { InMemoryFile } from "../../../../src/project/mem/InMemoryFile";
 import { InMemoryProject } from "../../../../src/project/mem/InMemoryProject";
 import { MarkdownFileParser } from "../../../../src/tree/ast/markdown/MarkdownFileParser";
-import { visit } from "@atomist/tree-path/visitor";
 
 /**
  * Parse sources in this project
