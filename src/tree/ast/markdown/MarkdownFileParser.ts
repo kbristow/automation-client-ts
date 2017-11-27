@@ -1,18 +1,18 @@
 import { File } from "../../../project/File";
 
-import { FileParser } from "../FileParser";
-import { TreeNode } from "@atomist/tree-path/TreeNode";
 import { PathExpression } from "@atomist/tree-path/path/pathExpression";
+import { TreeNode } from "@atomist/tree-path/TreeNode";
+import { FileParser } from "../FileParser";
 
 import stringify = require("json-stringify-safe");
 
 import * as assert from "power-assert";
 
+import { AllNodeTest, isNamedNodeTest } from "@atomist/tree-path/path/nodeTests";
 import { parse } from "marked-ast";
 import { locationSteps } from "../typescript/TypeScriptFileParser";
-import { AllNodeTest, isNamedNodeTest } from "@atomist/tree-path/path/nodeTests";
 
-const Productions = [ "heading", "list", "listitem", "paragraph" ];
+const Productions = ["heading", "list", "listitem", "paragraph", "link", "href", "title", "text"];
 
 /**
  * Parse markdown. Legal productions are heading, list, listitem and paragraph.
@@ -124,17 +124,24 @@ class DefaultMarkAstTreeNode extends AbstractMarkAstTreeNode {
         super(node, parent);
         (node.text || []).forEach(n => {
             if (typeof n === "string") {
-                console.log(`FOund string [${n}]`);
                 this.$children.push({
                     $name: "text",
                     $value: n,
                 });
             } else if (n.type === "link") {
-                console.log(`FOund link [${n}]`);
+                // Need two children to allow editing
                 this.$children.push({
                     $name: "link",
-                    $value: n.title,
+                    $value: n.text,
                     href: n.href,
+                    $children: [{
+                        $name: "href",
+                        $value: n.href,
+                    }, {
+                        $name: "title",
+                        $value: n.title,
+                    },
+                    ],
                 });
 
             } else if (n.type === "em") {

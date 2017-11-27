@@ -2,12 +2,12 @@ import "mocha";
 import * as assert from "power-assert";
 import { findMatches, findValues } from "../../../../src/tree/ast/astUtils";
 
-import * as appRoot from "app-root-path";
-import { NodeFsLocalProject } from "../../../../src/project/local/NodeFsLocalProject";
-import { MarkdownFileParser } from "../../../../src/tree/ast/markdown/MarkdownFileParser";
-import { InMemoryFile } from "../../../../src/project/mem/InMemoryFile";
 import { evaluateScalarValue } from "@atomist/tree-path/path/expressionEngine";
+import * as appRoot from "app-root-path";
 import { fail } from "power-assert";
+import { NodeFsLocalProject } from "../../../../src/project/local/NodeFsLocalProject";
+import { InMemoryFile } from "../../../../src/project/mem/InMemoryFile";
+import { MarkdownFileParser } from "../../../../src/tree/ast/markdown/MarkdownFileParser";
 
 /**
  * Parse sources in this project
@@ -62,6 +62,33 @@ describe("MarkdownParser real project parsing", () => {
             .then(matchResults => {
                 console.log(matchResults.map(m => m.$value).join("\n"));
                 assert(matchResults.length > 0);
+                done();
+            }).catch(done);
+    }).timeout(5000);
+
+    it("finds links", done => {
+        findMatches(thisProject, MarkdownFileParser,
+            "README.md",
+            "//link")
+            .then(matchResults => {
+                console.log(matchResults.map(m => m.$value).join("\n"));
+                assert(matchResults.length > 0);
+                matchResults.forEach(m => {
+                    const link = m as any;
+                    assert(!!link.href);
+                    assert(!!link.title);
+                });
+                done();
+            }).catch(done);
+    }).timeout(5000);
+
+    it("finds linked sites", done => {
+        findValues(thisProject, MarkdownFileParser,
+            "README.md",
+            "//link/href")
+            .then(values => {
+                console.log(values.join("\n"));
+                assert(values.length > 0);
                 done();
             }).catch(done);
     }).timeout(5000);
