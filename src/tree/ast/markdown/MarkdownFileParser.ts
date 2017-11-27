@@ -11,6 +11,7 @@ import * as assert from "power-assert";
 import { AllNodeTest, isNamedNodeTest } from "@atomist/tree-path/path/nodeTests";
 import { parse } from "marked-ast";
 import { locationSteps } from "../typescript/TypeScriptFileParser";
+import { addOffsets } from "./addOffsets";
 
 const Productions = [
     "em", "heading", "list", "listitem",
@@ -36,6 +37,7 @@ export class MarkdownJsMarkdownFileParser implements FileParser {
                     $children: [],
                 };
                 addNodes(parsed, root);
+                addOffsets(root, content);
                 return root;
             });
     }
@@ -145,7 +147,7 @@ class DefaultMarkAstTreeNode extends AbstractMarkAstTreeNode {
                                 $value: n.href,
                             }, {
                                 $name: "title",
-                                $value: n.title,
+                                $value: n.title || n.text[0],
                             },
                             ],
                         });

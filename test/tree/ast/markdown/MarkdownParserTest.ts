@@ -7,8 +7,9 @@ import { evaluateScalarValue } from "@atomist/tree-path/path/expressionEngine";
 import * as appRoot from "app-root-path";
 import { NodeFsLocalProject } from "../../../../src/project/local/NodeFsLocalProject";
 import { InMemoryFile } from "../../../../src/project/mem/InMemoryFile";
-import { MarkdownFileParser } from "../../../../src/tree/ast/markdown/MarkdownFileParser";
 import { InMemoryProject } from "../../../../src/project/mem/InMemoryProject";
+import { MarkdownFileParser } from "../../../../src/tree/ast/markdown/MarkdownFileParser";
+import { visit } from "@atomist/tree-path/visitor";
 
 /**
  * Parse sources in this project
@@ -16,6 +17,21 @@ import { InMemoryProject } from "../../../../src/project/mem/InMemoryProject";
 describe("MarkdownParser", () => {
 
     describe("simple parsing", () => {
+
+        it("should reject invalid path expression", done => {
+            const f = new InMemoryFile("script.ts", "const x = 1;");
+            MarkdownFileParser
+                .toAst(f)
+                .then(root => {
+                    try {
+                        evaluateScalarValue(root, "//xxParagraph");
+                        fail("Should have rejected invalid path expression");
+                    } catch (e) {
+                        // Ok
+                        done();
+                    }
+                }).catch(done);
+        });
 
         it("finds em", done => {
             const p = InMemoryProject.of({path: "README.md", content: "The dog was *big*"});
@@ -33,24 +49,41 @@ describe("MarkdownParser", () => {
                 }).catch(done);
         });
 
+        it("finds em offset", done => {
+            const content = "The dog was *big*";
+            const p = InMemoryProject.of({path: "README.md", content});
+            findMatches(p, MarkdownFileParser,
+                "README.md",
+                "//em")
+                .then(matchResults => {
+                    assert(matchResults.length === 1);
+                    assert(matchResults[0].$children.length === 1);
+                    const textKid = matchResults[0].$children[0];
+                    assert(textKid.$offset === content.indexOf("big"));
+                    assert(textKid.$name === "text");
+                    assert(textKid.$value === "big");
+                    assert(matchResults[0].$value === "*big*");
+                    done();
+                }).catch(done);
+        });
+
     });
 
     describe("real project parsing", () => {
 
         const thisProject = new NodeFsLocalProject("automation-client", appRoot.path);
 
-        it("should reject invalid path expression", done => {
-            const f = new InMemoryFile("script.ts", "const x = 1;");
+        it("validates offsets", done => {
+            const f = thisProject.findFileSync("README.md");
             MarkdownFileParser
                 .toAst(f)
                 .then(root => {
-                    try {
-                        evaluateScalarValue(root, "//xxParagraph");
-                        fail("Should have rejected invalid path expression");
-                    } catch (e) {
-                        // Ok
-                        done();
-                    }
+                    visit(root, n => {
+                        assert(n.$offset !== undefined);
+                        assert(f.getContentSync().substr(n.$offset, n.$value.length) === n.$value);
+                        return true;
+                    });
+                    done();
                 }).catch(done);
         });
 
