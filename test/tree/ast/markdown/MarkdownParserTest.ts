@@ -2,12 +2,12 @@ import "mocha";
 import * as assert from "power-assert";
 import { findMatches, findValues } from "../../../../src/tree/ast/astUtils";
 
-import * as appRoot from "app-root-path";
-import { NodeFsLocalProject } from "../../../../src/project/local/NodeFsLocalProject";
-import { MarkdownFileParser } from "../../../../src/tree/ast/markdown/MarkdownFileParser";
-import { InMemoryFile } from "../../../../src/project/mem/InMemoryFile";
 import { evaluateScalarValue } from "@atomist/tree-path/path/expressionEngine";
+import * as appRoot from "app-root-path";
 import { fail } from "power-assert";
+import { NodeFsLocalProject } from "../../../../src/project/local/NodeFsLocalProject";
+import { InMemoryFile } from "../../../../src/project/mem/InMemoryFile";
+import { MarkdownFileParser } from "../../../../src/tree/ast/markdown/MarkdownFileParser";
 
 /**
  * Parse sources in this project
