@@ -22,6 +22,7 @@ import { TmpDirectoryManager } from "../../spi/clone/tmpDirectoryManager";
 import { NodeFsLocalProject } from "../local/NodeFsLocalProject";
 import { GitProject } from "./GitProject";
 import { GitStatus, runStatusIn } from "./gitStatus";
+import { HandlerContext } from "../../HandlerContext";
 
 export const DefaultDirectoryManager = TmpDirectoryManager;
 
@@ -62,11 +63,12 @@ export class GitCommandGitProject extends NodeFsLocalProject implements GitProje
      * @param {DirectoryManager} directoryManager
      * @return {Promise<GitCommandGitProject>}
      */
-    public static cloned(credentials: ProjectOperationCredentials,
+    public static cloned(context: HandlerContext,
+                         credentials: ProjectOperationCredentials,
                          id: RemoteRepoRef,
                          opts: CloneOptions = DefaultCloneOptions,
                          directoryManager: DirectoryManager = DefaultDirectoryManager): Promise<GitProject> {
-        return clone(credentials, id, opts, directoryManager)
+        return clone(context, credentials, id, opts, directoryManager)
             .then(p => {
                 if (!!id.path) {
                     const pathInsideRepo = id.path.startsWith("/") ? id.path : "/" + id.path;
@@ -310,7 +312,8 @@ export class GitCommandGitProject extends NodeFsLocalProject implements GitProje
  * @param opts options for clone
  * @param directoryManager strategy for cloning
  */
-function clone(credentials: ProjectOperationCredentials,
+function clone(context: HandlerContext, // I really only need ResourceReleasing
+               credentials: ProjectOperationCredentials,
                id: RemoteRepoRef,
                opts: CloneOptions,
                directoryManager: DirectoryManager,
@@ -333,7 +336,7 @@ function clone(credentials: ProjectOperationCredentials,
                                 if (secondTry) {
                                     throw error;
                                 } else {
-                                    return clone(credentials, id, opts, directoryManager, true);
+                                    return clone(context, credentials, id, opts, directoryManager, true);
                                 }
                             });
                         });
