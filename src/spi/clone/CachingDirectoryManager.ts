@@ -33,12 +33,18 @@ export const CachingDirectoryManager: DirectoryManager = {
 
         return cache.directoryFor(owner, repo, branch, opts).then(existing =>
             pleaseLock(existing.path).then(lockResult => {
+                let releaseHasBeenCalled = false;
                 if (lockResult.success) {
                     return {
                         ...existing,
                         release: () => {
-                            console.log("Congratulations! You are releasing a lock!");
-                            return lockResult.release().then(existing.release);
+                            if (releaseHasBeenCalled) {
+                                return Promise.resolve()
+                            } else {
+                                console.log("Congratulations! You are releasing a lock!");
+                                releaseHasBeenCalled = true;
+                                return lockResult.release().then(existing.release);
+                            }
                         },
                         invalidate: () => {
                             console.log("Invalidating " + existing.path);
