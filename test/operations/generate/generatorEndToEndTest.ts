@@ -70,7 +70,7 @@ describe("generator end to end", () => {
                 return hasFile(GitHubToken, TargetOwner, repoName, "pom.xml")
                     .then(r => {
                         assert(r);
-                        return GitCommandGitProject.cloned({token: GitHubToken},
+                        return GitCommandGitProject.cloned({} as HandlerContext, {token: GitHubToken},
                             new GitHubRepoRef(TargetOwner, repoName))
                             .then(verifyPermissions);
                     });
@@ -99,7 +99,7 @@ describe("generator end to end", () => {
                 return hasFile(GitHubToken, TargetOwner, repoName, "pom.xml")
                     .then(r => {
                         assert(r);
-                        return GitCommandGitProject.cloned({token: GitHubToken},
+                        return GitCommandGitProject.cloned({} as HandlerContext, {token: GitHubToken},
                             new GitHubRepoRef(TargetOwner, repoName))
                             .then(verifyPermissions);
                     });
@@ -113,7 +113,7 @@ describe("generator end to end", () => {
             deleteOrIgnore(repoName).then(done(err));
         };
 
-        const clonedSeed = GitCommandGitProject.cloned({token: GitHubToken},
+        const clonedSeed = GitCommandGitProject.cloned({} as HandlerContext, {token: GitHubToken},
             new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const targetRepo = new GitHubRepoRef(TargetOwner, repoName);
 
@@ -126,7 +126,7 @@ describe("generator end to end", () => {
                 return hasFile(GitHubToken, TargetOwner, repoName, "pom.xml")
                     .then(r => {
                         assert(r);
-                        return GitCommandGitProject.cloned({token: GitHubToken},
+                        return GitCommandGitProject.cloned({} as HandlerContext, {token: GitHubToken},
                             targetRepo)
                             .then(verifyPermissions)
                             .then(() => {
@@ -139,7 +139,7 @@ describe("generator end to end", () => {
     it("should refuse to create a new GitHub repo using existing repo name", function(done) {
         this.retries(5);
 
-        const clonedSeed = GitCommandGitProject.cloned({token: GitHubToken},
+        const clonedSeed = GitCommandGitProject.cloned({} as HandlerContext, {token: GitHubToken},
             new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const targetRepo = new GitHubRepoRef("atomist-travisorg", "this-repository-exists");
 
