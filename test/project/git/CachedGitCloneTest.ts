@@ -41,14 +41,12 @@ describe("cached git clone projects", () => {
             .then(cleaningDone, cleaningDone);
     }).timeout(20000);
 
-
     it("lets you call the release function more than once", done => {
         getAClone().then(clone1 =>
             clone1.release()
                 .then(() => clone1.release()))
             .then(done, done);
     }).timeout(20000);
-
 
     it("returns the same place on the filesystem in sequence", done => {
         getAClone({ repoName: "this-repository-exists-to-test-cached-clones" }).then(clone1 => {

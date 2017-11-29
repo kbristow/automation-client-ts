@@ -7,6 +7,7 @@ import { Project } from "../Project";
 
 import { ActionResult } from "../../action/ActionResult";
 import { CommandResult, runCommand } from "../../action/cli/commandLine";
+import { HandlerContext } from "../../HandlerContext";
 import { logger } from "../../internal/util/logger";
 import { hideString } from "../../internal/util/string";
 import { GitHubRepoRef, isGitHubRepoRef } from "../../operations/common/GitHubRepoRef";
@@ -22,7 +23,6 @@ import { TmpDirectoryManager } from "../../spi/clone/tmpDirectoryManager";
 import { NodeFsLocalProject } from "../local/NodeFsLocalProject";
 import { GitProject } from "./GitProject";
 import { GitStatus, runStatusIn } from "./gitStatus";
-import { HandlerContext } from "../../HandlerContext";
 
 export const DefaultDirectoryManager = TmpDirectoryManager;
 

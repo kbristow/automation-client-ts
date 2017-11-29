@@ -39,7 +39,7 @@ export const CachingDirectoryManager: DirectoryManager = {
                         ...existing,
                         release: () => {
                             if (releaseHasBeenCalled) {
-                                return Promise.resolve()
+                                return Promise.resolve();
                             } else {
                                 console.log("Congratulations! You are releasing a lock!");
                                 releaseHasBeenCalled = true;
