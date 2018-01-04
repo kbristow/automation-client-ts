@@ -137,6 +137,7 @@
     "test": "mocha --require espower-typescript/guess --exit 'test/{*.ts,!(api|benchmark|bitbucket-api)/**/*.ts}'",
     "test:api": "mocha --require espower-typescript/guess --exit 'test/api/**/*.ts'",
     "test:bitbucket-api": "mocha --require espower-typescript/guess --exit 'test/bitbucket-api/**/*.ts'",
+    "test:bitbucketserver-api": "mocha --require espower-typescript/guess --exit 'test/bitbucketserver-api/**/*.ts'",
     "test:benchmark": "npm-run-all test:benchmark:run test:benchmark:process clean:benchmark",
     "test:benchmark:process": "node --prof-process isolate-*-v8.log > profile.txt",
     "test:benchmark:run": "mocha --prof --require espower-typescript/guess 'test/benchmark/**/*.ts'",
